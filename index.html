@@ -1,1 +1,91 @@
-<!DOCTYPE html> <html lang="en"> <head> <meta charset="UTF-8" /> <meta name="viewport" content="width=device-width, initial-scale=1.0" /> <title>BuildVault — PC Build Manager</title> <link rel="preconnect" href="https://fonts.googleapis.com"> <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin> <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet"> <link rel="stylesheet" href="style.css" /> </head> <body> <div class="app-shell"> <header class="topbar"> <a href="#" class="brand" aria-label="BuildVault home"><span class="brand-mark">BV</span><span>Build<span>Vault</span></span></a> <div class="header-actions"> <button class="icon-button" id="importBtn" title="Import builds" aria-label="Import builds">⇧</button> <button class="icon-button" id="exportBtn" title="Export builds" aria-label="Export builds">⇩</button> <button class="primary-button" id="newBuildBtn"><span>+</span> New build</button> </div> </header> <main> <section class="hero"> <div> <p class="eyebrow">YOUR HARDWARE LIBRARY</p> <h1>Build better.<br><em>Keep it all here.</em></h1> <p class="hero-copy">Plan, price, and preserve every one of your PC builds in one elegant workspace.</p> </div> <div class="stat-group"> <div class="stat"><span id="buildCount">0</span><small>BUILDS</small></div> <div class="stat"><span id="totalValue">$0</span><small>TOTAL VALUE</small></div> </div> </section> <section class="toolbar" aria-label="Build controls"> <label class="search-box"><span>⌕</span><input id="searchInput" type="search" placeholder="Search your builds…" /></label> <label class="sort-select">Sort <select id="sortSelect"><option value="updated">Recently updated</option><option value="title">Name A–Z</option><option value="price-high">Price: high to low</option><option value="price-low">Price: low to high</option></select></label> </section> <section id="buildGrid" class="build-grid" aria-live="polite"></section> <section id="emptyState" class="empty-state" hidden> <div class="empty-icon">⌘</div><h2>No builds found</h2><p>Start a new build to begin collecting your hardware.</p><button class="primary-button empty-create">+ Create your first build</button> </section> </main> </div> <input type="file" id="importFile" accept="application/json" hidden /> <div id="toastContainer" class="toast-container" aria-live="polite"></div> <dialog id="buildModal" class="modal"> <form id="buildForm" method="dialog"> <div class="modal-head"><div><p class="eyebrow" id="modalKicker">NEW BUILD</p><h2 id="modalTitle">Create a build</h2></div><button class="close-button" type="button" data-close="buildModal">×</button></div> <div class="modal-body"> <input id="buildId" type="hidden" /> <div class="image-picker" id="imagePreview"><span>🖥</span><small>Cover image preview</small></div> <div class="field full"><label for="image">Cover image URL</label><input id="image" type="url" placeholder="https://images… (optional)" /></div> <div class="field full"><label for="title">Build title <b>*</b></label><input id="title" required maxlength="80" placeholder="e.g. Midnight 4090" /></div> <div class="field full"><label for="description">Description</label><textarea id="description" rows="3" maxlength="300" placeholder="What makes this build special?"></textarea></div> <div class="field full"><label for="notes">Notes</label><textarea id="notes" rows="4" maxlength="3000" placeholder="Benchmarks, upgrade plans, cable routing…"></textarea></div> <label class="favorite-switch"><input id="favorite" type="checkbox" /><span class="switch"></span><span>Favorite build</span></label> </div> <div class="modal-footer"><button type="button" class="text-button" data-close="buildModal">Cancel</button><button type="submit" class="primary-button">Save build</button></div> </form> </dialog> <dialog id="detailModal" class="modal detail-modal"> <div class="modal-head"><div><p class="eyebrow">BUILD DETAILS</p><h2 id="detailTitle"></h2></div><div class="head-buttons"><button class="icon-button" id="editBuildBtn" title="Edit build">✎</button><button class="close-button" data-close="detailModal">×</button></div></div> <div class="detail-body"> <div class="detail-cover" id="detailCover"></div> <div class="detail-summary"><p id="detailDescription"></p><div><span>ESTIMATED TOTAL</span><strong id="detailPrice">$0</strong></div></div> <section class="components-section"><div class="section-title"><div><p class="eyebrow">PARTS LIST</p><h3>Components <span id="componentCount">0</span></h3></div><button id="addComponentBtn" class="secondary-button">+ Add component</button></div><div id="componentsList" class="components-list"></div></section> <section class="notes-section" id="notesSection"><p class="eyebrow">NOTES</p><p id="detailNotes"></p></section> </div> <div class="modal-footer detail-footer"><button id="deleteBuildBtn" class="danger-button">Delete build</button><button class="primary-button" data-close="detailModal">Done</button></div> </dialog> <dialog id="componentModal" class="modal small-modal"> <form id="componentForm" method="dialog"><div class="modal-head"><div><p class="eyebrow" id="componentKicker">NEW COMPONENT</p><h2 id="componentModalTitle">Add component</h2></div><button type="button" class="close-button" data-close="componentModal">×</button></div> <div class="modal-body"><input type="hidden" id="componentId" /> <div class="field"><label for="componentCategory">Category <b>*</b></label><input id="componentCategory" list="categories" required placeholder="e.g. GPU" /><datalist id="categories"><option>CPU</option><option>GPU</option><option>Motherboard</option><option>Memory</option><option>Storage</option><option>Power Supply</option><option>Case</option><option>Cooling</option><option>Monitor</option></datalist></div> <div class="field"><label for="componentPrice">Price</label><input id="componentPrice" type="number" min="0" step="0.01" placeholder="0.00" /></div> <div class="field full"><label for="componentName">Component name <b>*</b></label><input id="componentName" required maxlength="120" placeholder="e.g. NVIDIA RTX 4090 Founders Edition" /></div> <div class="field full"><label for="componentDetails">Details</label><input id="componentDetails" maxlength="180" placeholder="e.g. 24 GB GDDR6X · Black" /></div> </div><div class="modal-footer"><button type="button" class="text-button" data-close="componentModal">Cancel</button><button class="primary-button" type="submit">Save component</button></div> </form> </dialog> <script src="script.js"></script> </body> </html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BuildVault — PC Build Manager</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <a href="#" class="brand" aria-label="BuildVault home"><span class="brand-mark">BV</span><span>Build<span>Vault</span></span></a>
+      <div class="header-actions">
+        <button class="icon-button" id="importBtn" title="Import builds" aria-label="Import builds">⇧</button>
+        <button class="icon-button" id="exportBtn" title="Export builds" aria-label="Export builds">⇩</button>
+        <button class="primary-button" id="newBuildBtn"><span>+</span> New build</button>
+      </div>
+    </header>
+
+    <main>
+      <section class="hero">
+        <div>
+          <p class="eyebrow">YOUR HARDWARE LIBRARY</p>
+          <h1>Build better.<br><em>Keep it all here.</em></h1>
+          <p class="hero-copy">Plan, price, and preserve every one of your PC builds in one elegant workspace.</p>
+        </div>
+        <div class="stat-group">
+          <div class="stat"><span id="buildCount">0</span><small>BUILDS</small></div>
+          <div class="stat"><span id="totalValue">$0</span><small>TOTAL VALUE</small></div>
+        </div>
+      </section>
+
+      <section class="toolbar" aria-label="Build controls">
+        <label class="search-box"><span>⌕</span><input id="searchInput" type="search" placeholder="Search your builds…" /></label>
+        <label class="sort-select">Sort <select id="sortSelect"><option value="updated">Recently updated</option><option value="title">Name A–Z</option><option value="price-high">Price: high to low</option><option value="price-low">Price: low to high</option></select></label>
+      </section>
+
+      <section id="buildGrid" class="build-grid" aria-live="polite"></section>
+      <section id="emptyState" class="empty-state" hidden>
+        <div class="empty-icon">⌘</div><h2>No builds found</h2><p>Start a new build to begin collecting your hardware.</p><button class="primary-button empty-create">+ Create your first build</button>
+      </section>
+    </main>
+  </div>
+
+  <input type="file" id="importFile" accept="application/json" hidden />
+  <div id="toastContainer" class="toast-container" aria-live="polite"></div>
+
+  <dialog id="buildModal" class="modal">
+    <form id="buildForm" method="dialog">
+      <div class="modal-head"><div><p class="eyebrow" id="modalKicker">NEW BUILD</p><h2 id="modalTitle">Create a build</h2></div><button class="close-button" type="button" data-close="buildModal">×</button></div>
+      <div class="modal-body">
+        <input id="buildId" type="hidden" />
+        <div class="image-picker" id="imagePreview"><span>🖥</span><small>Cover image preview</small></div>
+        <div class="field full"><label for="image">Cover image</label><input id="image" type="file" accept="image/*" /><small class="field-hint">Upload a JPG, PNG, WEBP, or GIF. Saved locally with this build.</small></div>
+        <div class="field full"><label for="title">Build title <b>*</b></label><input id="title" required maxlength="80" placeholder="e.g. Midnight 4090" /></div>
+        <div class="field full"><label for="description">Description</label><textarea id="description" rows="3" maxlength="300" placeholder="What makes this build special?"></textarea></div>
+        <div class="field full"><label for="notes">Notes</label><textarea id="notes" rows="4" maxlength="3000" placeholder="Benchmarks, upgrade plans, cable routing…"></textarea></div>
+        <label class="favorite-switch"><input id="favorite" type="checkbox" /><span class="switch"></span><span>Favorite build</span></label>
+      </div>
+      <div class="modal-footer"><button type="button" class="text-button" data-close="buildModal">Cancel</button><button type="submit" class="primary-button">Save build</button></div>
+    </form>
+  </dialog>
+
+  <dialog id="detailModal" class="modal detail-modal">
+    <div class="modal-head"><div><p class="eyebrow">BUILD DETAILS</p><h2 id="detailTitle"></h2></div><div class="head-buttons"><button class="icon-button" id="editBuildBtn" title="Edit build">✎</button><button class="close-button" data-close="detailModal">×</button></div></div>
+    <div class="detail-body">
+      <div class="detail-cover" id="detailCover"></div>
+      <div class="detail-summary"><p id="detailDescription"></p><div><span>ESTIMATED TOTAL</span><strong id="detailPrice">$0</strong></div></div>
+      <section class="components-section"><div class="section-title"><div><p class="eyebrow">PARTS LIST</p><h3>Components <span id="componentCount">0</span></h3></div><button id="addComponentBtn" class="secondary-button">+ Add component</button></div><div id="componentsList" class="components-list"></div></section>
+      <section class="notes-section" id="notesSection"><p class="eyebrow">NOTES</p><p id="detailNotes"></p></section>
+    </div>
+    <div class="modal-footer detail-footer"><button id="deleteBuildBtn" class="danger-button">Delete build</button><button class="primary-button" data-close="detailModal">Done</button></div>
+  </dialog>
+
+  <dialog id="componentModal" class="modal small-modal">
+    <form id="componentForm" method="dialog"><div class="modal-head"><div><p class="eyebrow" id="componentKicker">NEW COMPONENT</p><h2 id="componentModalTitle">Add component</h2></div><button type="button" class="close-button" data-close="componentModal">×</button></div>
+      <div class="modal-body"><input type="hidden" id="componentId" />
+        <div class="field"><label for="componentCategory">Category <b>*</b></label><input id="componentCategory" list="categories" required placeholder="e.g. GPU" /><datalist id="categories"><option>CPU</option><option>GPU</option><option>Motherboard</option><option>Memory</option><option>Storage</option><option>Power Supply</option><option>Case</option><option>Cooling</option><option>Monitor</option></datalist></div>
+        <div class="field"><label for="componentPrice">Price</label><input id="componentPrice" type="number" min="0" step="0.01" placeholder="0.00" /></div>
+        <div class="field full"><label for="componentName">Component name <b>*</b></label><input id="componentName" required maxlength="120" placeholder="e.g. NVIDIA RTX 4090 Founders Edition" /></div>
+        <div class="field full"><label for="componentDetails">Details</label><input id="componentDetails" maxlength="180" placeholder="e.g. 24 GB GDDR6X · Black" /></div>
+        <div class="field full"><label for="componentLink">Product link</label><input id="componentLink" type="url" maxlength="1000" placeholder="https://store.example/product (optional)" /></div>
+      </div><div class="modal-footer"><button type="button" class="text-button" data-close="componentModal">Cancel</button><button class="primary-button" type="submit">Save component</button></div>
+    </form>
+  </dialog>
+  <script src="script.js"></script>
+</body>
+</html>
